@@ -1,0 +1,222 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: #f2f2f2;
+  font-family: "Comic Sans MS", Arial, sans-serif;
+  padding: 15px;
+}
+
+.periodico {
+  max-width: 1200px;
+  margin: auto;
+  background: #fffdf5;
+  border: 3px solid #222;
+}
+
+.encabezado {
+  background: #e8f3b4;
+  border-bottom: 2px solid #222;
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  align-items: center;
+  padding: 15px 30px;
+}
+
+.encabezado h1 {
+  font-size: 70px;
+  font-weight: 400;
+}
+
+.encabezado span {
+  font-size: 45px;
+  font-style: italic;
+}
+
+.logo {
+  text-align: center;
+  font-size: 70px;
+}
+
+.logo p {
+  font-size: 25px;
+}
+
+.grid-principal {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-areas:
+    "encuesta centro beat"
+    "cantantes centro revelacion"
+    "album centro revelacion";
+}
+
+.caja {
+  border: 2px solid #222;
+  padding: 15px;
+  text-align: center;
+}
+
+.azul { background: #dfe8ff; }
+.naranja { background: #ffe7ce; }
+.verde { background: #e7f5de; }
+.morado { background: #eee1ff; }
+.rojo { background: #ffdce2; }
+
+.encuesta { grid-area: encuesta; }
+.cantantes { grid-area: cantantes; text-align: left; }
+.album { grid-area: album; }
+.centro { grid-area: centro; background: #fffdf0; }
+.beat { grid-area: beat; }
+.revelacion { grid-area: revelacion; }
+
+h2, h3 {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+
+ul, ol {
+  margin-left: 25px;
+  line-height: 1.5;
+}
+
+.buscador {
+  border-bottom: 2px solid #222;
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.artista {
+  height: 190px;
+  border: 3px solid #222;
+  margin: 10px auto 20px;
+  display: grid;
+  place-items: center;
+  font-size: 35px;
+  background: #f7f7f7;
+}
+
+button {
+  border: 2px solid #222;
+  background: transparent;
+  padding: 8px 15px;
+  margin-top: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cara {
+  border: 2px solid #222;
+  border-radius: 50%;
+  width: 130px;
+  height: 130px;
+  display: grid;
+  place-items: center;
+  margin: 20px auto;
+  font-weight: bold;
+  background: #f8cfcf;
+}
+
+.categorias {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.categoria {
+  min-height: 230px;
+  border: 2px solid #222;
+  padding: 15px;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 10px;
+}
+
+.icono {
+  font-size: 55px;
+}
+
+.deportes { background: #edf8df; }
+.moda { background: #ffdce8; }
+.comida { background: #ffe4c4; }
+.tecnologia { background: #dfe9ff; }
+
+footer {
+  border-top: 2px solid #222;
+  text-align: center;
+  padding: 18px;
+  background: #f4eeee;
+}
+
+/* VISTA MÓVIL */
+@media (max-width: 768px) {
+  body {
+    padding: 8px;
+  }
+
+  .encabezado {
+    grid-template-columns: 1fr 100px;
+    padding: 12px;
+  }
+
+  .encabezado h1 {
+    font-size: 38px;
+  }
+
+  .encabezado span {
+    font-size: 25px;
+  }
+
+  .logo {
+    font-size: 45px;
+  }
+
+  .logo p {
+    display: none;
+  }
+
+  .grid-principal {
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-areas:
+      "encuesta centro beat"
+      "cantantes centro revelacion"
+      "album centro revelacion";
+  }
+
+  .caja {
+    padding: 8px;
+    font-size: 13px;
+  }
+
+  .artista {
+    height: 140px;
+    font-size: 22px;
+  }
+
+  .categorias {
+    grid-template-columns: 1fr;
+  }
+
+  .categoria {
+    min-height: auto;
+    grid-template-columns: 90px 1fr 120px;
+    grid-template-rows: auto;
+    align-items: center;
+  }
+
+  .categoria ul {
+    display: none;
+  }
+
+  .icono {
+    font-size: 45px;
+  }
+
+  footer {
+    font-size: 14px;
+  }
+}
