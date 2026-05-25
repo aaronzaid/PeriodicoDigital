@@ -1,126 +1,1109 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Periódico Digital</title>
-  <link rel="stylesheet" href="estilos.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>the big 3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --hueso: #f5f1e7;
+      --hueso-2: #ebe5d7;
+      --papel: #fffaf0;
+      --gris: #6f716a;
+      --gris-2: #cfc8b8;
+      --gris-3: #ede8dd;
+      --texto: #25291f;
+      --oliva: #697344;
+      --oliva-oscuro: #41492a;
+      --oliva-suave: #e8ecd9;
+      --linea: rgba(65, 73, 42, 0.28);
+      --radio: 18px;
+      --sombra: 0 12px 35px rgba(37, 41, 31, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at top left, rgba(105, 115, 68, 0.16), transparent 30rem),
+        linear-gradient(180deg, var(--hueso), #efeadf 55%, var(--hueso));
+      color: var(--texto);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.55;
+    }
+
+    body[data-section="deporte"] { --section: #6f7b45; --soft: #e8ecd9; }
+    body[data-section="musica"] { --section: #727b55; --soft: #eceadf; }
+    body[data-section="moda"] { --section: #5f6b40; --soft: #e7eadc; }
+    body[data-section="tecnologia"] { --section: #566238; --soft: #e4e9d4; }
+    body[data-section="comida"] { --section: #778050; --soft: #efeddd; }
+
+    .wrap {
+      width: min(1120px, calc(100% - 32px));
+      margin-inline: auto;
+    }
+
+    .top-strip {
+      border-bottom: 1px solid var(--linea);
+      color: var(--gris);
+      font-size: 0.78rem;
+      background: rgba(245, 241, 231, 0.72);
+    }
+
+    .top-strip .wrap {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 9px 0;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(245, 241, 231, 0.9);
+      border-bottom: 1px solid var(--linea);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: end;
+      gap: 24px;
+      padding: 30px 0 18px;
+      border-bottom: 1px solid var(--linea);
+    }
+
+    .brand {
+      font-size: clamp(2.8rem, 8vw, 6.9rem);
+      line-height: 0.86;
+      letter-spacing: -0.11em;
+      font-weight: 800;
+      text-transform: lowercase;
+    }
+
+    .subtitle {
+      max-width: 660px;
+      margin-top: 12px;
+      color: var(--gris);
+      font-size: clamp(0.93rem, 1.6vw, 1.05rem);
+    }
+
+    .issue-card {
+      min-width: 190px;
+      padding: 14px 16px;
+      border: 1px solid var(--linea);
+      border-radius: var(--radio);
+      background: rgba(255, 250, 240, 0.72);
+      color: var(--gris);
+      font-size: 0.86rem;
+    }
+
+    .issue-card strong {
+      display: block;
+      color: var(--oliva-oscuro);
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    nav {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 14px 0 16px;
+      scrollbar-width: none;
+    }
+
+    nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    nav button,
+    .btn,
+    .chip-button,
+    .option-list button {
+      border: 1px solid var(--linea);
+      background: rgba(255, 250, 240, 0.78);
+      color: var(--texto);
+      border-radius: 999px;
+      padding: 10px 14px;
+      font: inherit;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+    }
+
+    nav button {
+      white-space: nowrap;
+    }
+
+    nav button:hover,
+    nav button.active,
+    .btn:hover,
+    .chip-button:hover,
+    .option-list button:hover {
+      background: var(--section, var(--oliva));
+      border-color: var(--section, var(--oliva));
+      color: var(--hueso);
+      transform: translateY(-1px);
+    }
+
+    main {
+      padding: 28px 0 48px;
+    }
+
+    .section-panel {
+      display: none;
+      animation: appear 0.25s ease;
+    }
+
+    .section-panel.visible {
+      display: block;
+    }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-head {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      align-items: end;
+      gap: 18px;
+      padding: 0 0 20px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--linea);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--section);
+      font-size: clamp(1.5rem, 3vw, 2.3rem);
+      letter-spacing: -0.065em;
+      line-height: 1;
+      font-weight: 800;
+      text-transform: lowercase;
+    }
+
+    .section-desc {
+      max-width: 560px;
+      justify-self: end;
+      color: var(--gris);
+      text-align: right;
+      font-size: 0.95rem;
+    }
+
+    .news-grid {
+      display: grid;
+      grid-template-columns: 1.35fr 1fr 1fr;
+      gap: 0;
+      border-top: 1px solid var(--linea);
+      border-left: 1px solid var(--linea);
+      background: rgba(255, 250, 240, 0.36);
+    }
+
+    .more-grid {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 0;
+      margin-top: 18px;
+      border-top: 1px solid var(--linea);
+      border-left: 1px solid var(--linea);
+    }
+
+    .two-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .card,
+    .side-card,
+    .widget {
+      background: rgba(255, 250, 240, 0.7);
+      border-right: 1px solid var(--linea);
+      border-bottom: 1px solid var(--linea);
+    }
+
+    .card {
+      position: relative;
+      min-height: 100%;
+      padding: 22px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .card.featured {
+      background: linear-gradient(145deg, var(--soft), rgba(255, 250, 240, 0.78) 62%);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 14px auto 14px 0;
+      width: 4px;
+      border-radius: 999px;
+      background: var(--section);
+      opacity: 0;
+      transition: opacity 0.18s ease;
+    }
+
+    .card:hover::before,
+    .card:focus-visible::before {
+      opacity: 1;
+    }
+
+    .emoji {
+      display: inline-grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      margin-bottom: 16px;
+      border: 1px solid var(--linea);
+      border-radius: 50%;
+      background: rgba(255, 250, 240, 0.72);
+      font-size: 1.35rem;
+    }
+
+    .kicker,
+    .side-title,
+    .widget-label {
+      color: var(--section);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.72rem;
+      font-weight: 800;
+      margin-bottom: 9px;
+    }
+
+    h2, h3 {
+      letter-spacing: -0.045em;
+      line-height: 1.14;
+      font-weight: 760;
+    }
+
+    h2 {
+      font-size: 1.08rem;
+      margin-bottom: 10px;
+    }
+
+    .featured h2 {
+      font-size: clamp(1.65rem, 3vw, 2.45rem);
+    }
+
+    .summary,
+    .byline,
+    .side-item span,
+    .widget p,
+    .small-text,
+    .modal-body {
+      color: var(--gris);
+      font-size: 0.93rem;
+    }
+
+    .small .summary {
+      display: none;
+    }
+
+    .byline {
+      margin-top: 14px;
+      font-size: 0.78rem;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .chip-button {
+      padding: 8px 11px;
+      font-size: 0.82rem;
+      background: rgba(245, 241, 231, 0.74);
+    }
+
+    .chip-button:disabled {
+      cursor: default;
+      opacity: 0.72;
+    }
+
+    .side-card {
+      padding: 18px;
+      background: rgba(232, 236, 217, 0.42);
+    }
+
+    .side-item {
+      display: grid;
+      grid-template-columns: 38px 1fr;
+      gap: 10px;
+      padding: 13px 0;
+      border-top: 1px solid var(--linea);
+      cursor: pointer;
+    }
+
+    .side-item:first-of-type {
+      border-top: 0;
+    }
+
+    .num {
+      color: var(--section);
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .side-item strong {
+      display: block;
+      line-height: 1.22;
+      font-size: 0.92rem;
+    }
+
+    .interactive-zone {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-top: 22px;
+      border-top: 1px solid var(--linea);
+      border-left: 1px solid var(--linea);
+    }
+
+    .widget {
+      padding: 20px;
+      min-height: 250px;
+      background: rgba(255, 250, 240, 0.62);
+    }
+
+    .widget h3 {
+      color: var(--oliva-oscuro);
+      font-size: 1.08rem;
+      margin-bottom: 8px;
+    }
+
+    .option-list {
+      display: grid;
+      gap: 8px;
+      margin-top: 13px;
+    }
+
+    .option-list button {
+      width: 100%;
+      text-align: left;
+      border-radius: 14px;
+      background: var(--papel);
+    }
+
+    .option-list button.correct {
+      background: #e3ead1;
+      border-color: var(--oliva);
+      color: var(--oliva-oscuro);
+      font-weight: 750;
+    }
+
+    .option-list button.wrong {
+      background: #eee2d7;
+      border-color: #b79c89;
+      color: #6b4e3e;
+    }
+
+    .option-list button:disabled {
+      cursor: default;
+      opacity: 0.96;
+      transform: none;
+    }
+
+    .result {
+      min-height: 1.45em;
+      margin-top: 12px;
+      color: var(--oliva-oscuro);
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .poll-row {
+      display: grid;
+      gap: 6px;
+      margin-top: 11px;
+      color: var(--gris);
+      font-size: 0.82rem;
+    }
+
+    .poll-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .bar {
+      height: 8px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--gris-3);
+    }
+
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 0;
+      border-radius: inherit;
+      background: var(--section);
+      transition: width 0.28s ease;
+    }
+
+    .challenge-box {
+      display: grid;
+      gap: 10px;
+      margin-top: 13px;
+      padding: 14px;
+      border: 1px solid var(--linea);
+      border-radius: 16px;
+      background: rgba(232, 236, 217, 0.38);
+    }
+
+    .floating-tools {
+      position: fixed;
+      right: 14px;
+      bottom: 14px;
+      z-index: 30;
+      display: flex;
+      gap: 8px;
+    }
+
+    .floating-tools button {
+      border: 1px solid var(--linea);
+      background: rgba(255, 250, 240, 0.92);
+      color: var(--texto);
+      border-radius: 999px;
+      padding: 10px 12px;
+      box-shadow: var(--sombra);
+      cursor: pointer;
+      font: inherit;
+      font-size: 0.85rem;
+    }
+
+    .compact .summary,
+    .compact .byline {
+      display: none;
+    }
+
+    .compact .card,
+    .compact .widget,
+    .compact .side-card {
+      padding: 16px;
+    }
+
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 50;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(37, 41, 31, 0.64);
+    }
+
+    .modal-overlay.open {
+      display: flex;
+    }
+
+    .modal {
+      width: min(680px, 100%);
+      max-height: 86vh;
+      overflow: auto;
+      position: relative;
+      padding: 26px;
+      border: 1px solid var(--linea);
+      border-radius: 24px;
+      background: var(--papel);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.22);
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      border: 0;
+      background: transparent;
+      color: var(--gris);
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    .modal-kicker {
+      color: var(--section);
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      font-size: 0.75rem;
+      font-weight: 800;
+      margin-bottom: 9px;
+    }
+
+    .modal h2 {
+      margin-right: 28px;
+      font-size: clamp(1.45rem, 4vw, 2.2rem);
+    }
+
+    .modal-body p {
+      margin-top: 12px;
+    }
+
+    footer {
+      padding: 26px 0;
+      border-top: 1px solid var(--linea);
+      color: var(--gris);
+      text-align: center;
+      font-size: 0.85rem;
+    }
+
+    @media (max-width: 920px) {
+      .news-grid,
+      .interactive-zone {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .more-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .side-card {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0 14px;
+      }
+
+      .side-title {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .wrap {
+        width: min(100% - 20px, 1120px);
+      }
+
+      .top-strip .wrap,
+      .hero,
+      .section-head {
+        display: block;
+      }
+
+      .top-strip span:last-child {
+        display: none;
+      }
+
+      header {
+        position: static;
+      }
+
+      .hero {
+        padding: 22px 0 16px;
+      }
+
+      .brand {
+        letter-spacing: -0.095em;
+      }
+
+      .issue-card {
+        display: inline-block;
+        min-width: 0;
+        margin-top: 14px;
+      }
+
+      .section-desc {
+        margin-top: 8px;
+        text-align: left;
+      }
+
+      .news-grid,
+      .two-grid,
+      .interactive-zone,
+      .side-card {
+        grid-template-columns: 1fr;
+      }
+
+      .small .summary {
+        display: block;
+      }
+
+      .card,
+      .widget,
+      .side-card {
+        padding: 18px;
+      }
+
+      .floating-tools {
+        left: 10px;
+        right: 10px;
+        justify-content: center;
+      }
+    }
+  </style>
 </head>
-<body>
-
-  <div class="periodico">
-
-    <header class="encabezado">
-      <h1>Periódico <span>Digital</span></h1>
-      <div class="logo">♫<p>MUSIC</p></div>
-    </header>
-
-    <main class="grid-principal">
-
-      <section class="encuesta caja azul">
-        <p>Realiza esta encuesta sobre el mejor género musical</p>
-        <button>ENCUESTA ♫</button>
-      </section>
-
-      <section class="cantantes caja naranja">
-        <h3>Lista de los mejores cantantes según tu país</h3>
-        <ul>
-          <li>Peso Pluma</li>
-          <li>Bad Bunny</li>
-          <li>Karol G</li>
-          <li>Feid</li>
-          <li>J Balvin</li>
-        </ul>
-      </section>
-
-      <section class="album caja verde">
-        <h3>Mejor álbum hoy</h3>
-        <p>D.H.M.F - Bad Bunny</p>
-        <div class="mini-img">💿</div>
-      </section>
-
-      <section class="centro caja">
-        <div class="buscador">Escribe tu canción favorita 🔍 www</div>
-        <h2>Artista más escuchado</h2>
-        <div class="artista">KANYE</div>
-        <h3>Lista de canciones más escuchadas</h3>
-        <ol>
-          <li>Ghost Town - Kanye West</li>
-          <li>DTMF - Bad Bunny</li>
-          <li>Baile Inolvidable - Bad Bunny</li>
-          <li>Bury - Ye</li>
-          <li>All the Love - Ye</li>
-          <li>La muchacha interesada - Jose Torres</li>
-          <li>Ring Ring Ring - Tyler The Creator</li>
-        </ol>
-      </section>
-
-      <section class="beat caja morado">
-        <p>Prueba esta actividad y trata de armar un beat</p>
-        <button>ARMA TU BEAT ★</button>
-      </section>
-
-      <section class="revelacion caja rojo">
-        <h3>Cantante revelación</h3>
-        <div class="cara">IGOR</div>
-        <p>Tyler The Creator</p>
-      </section>
-
-    </main>
-
-    <section class="categorias">
-
-      <article class="categoria deportes">
-        <div class="icono">⚽</div>
-        <div>
-          <h2>Deportes</h2>
-          <p>Los 5 equipos favoritos del 2024</p>
-          <ul>
-            <li>Real Madrid</li>
-            <li>Manchester City</li>
-            <li>América</li>
-            <li>Barcelona</li>
-            <li>Bayern Múnich</li>
-          </ul>
-        </div>
-        <button>LEER MÁS ♣</button>
-      </article>
-
-      <article class="categoria moda">
-        <div class="icono">👕</div>
-        <div>
-          <h2>Moda</h2>
-          <p>Tendencias de moda que marcan estilo este año</p>
-        </div>
-        <button>LEER MÁS ♣</button>
-      </article>
-
-      <article class="categoria comida">
-        <div class="icono">🍔🥤</div>
-        <div>
-          <h2>Comida</h2>
-          <p>Recetas fáciles y deliciosas para cualquier ocasión</p>
-        </div>
-        <button>LEER MÁS ♣</button>
-      </article>
-
-      <article class="categoria tecnologia">
-        <div class="icono">📱</div>
-        <div>
-          <h2>Tecnología</h2>
-          <p>Los nuevos gadgets que cambian tu día a día</p>
-        </div>
-        <button>LEER MÁS ♣</button>
-      </article>
-
-    </section>
-
-    <footer>
-      Los derechos de esta página están reservados por Aarón Mariscal y El BIG 3 ©
-    </footer>
-
+<body data-section="deporte">
+  <div class="top-strip">
+    <div class="wrap">
+      <span id="fecha-hoy"></span>
+      <span>Edición escolar · Diseño minimalista editorial</span>
+    </div>
   </div>
 
-  <script src="script.js"></script>
+  <header>
+    <div class="wrap">
+      <div class="hero">
+        <div>
+          <h1 class="brand">the big 3</h1>
+          <p class="subtitle">Periódico digital con secciones separadas por líneas, colores hueso, gris y verde oliva, más dinámicas para que el lector participe.</p>
+        </div>
+        <div class="issue-card">
+          <strong>n.º 003</strong>
+          Hueso · Gris · Oliva
+        </div>
+      </div>
+
+      <nav aria-label="Secciones del periódico">
+        <button class="active" data-section-target="deporte">🏀 Deporte</button>
+        <button data-section-target="musica">🎵 Música</button>
+        <button data-section-target="moda">👗 Moda</button>
+        <button data-section-target="tecnologia">💻 Tecnología</button>
+        <button data-section-target="comida">🌮 Comida</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="contenido"></main>
+
+  <div class="floating-tools" aria-label="Herramientas de lectura">
+    <button id="toggle-compact">Vista simple</button>
+    <button id="go-top">Inicio</button>
+  </div>
+
+  <div class="modal-overlay" id="modal" aria-hidden="true">
+    <article class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">
+      <button class="modal-close" id="modal-close" aria-label="Cerrar">×</button>
+      <div class="modal-kicker" id="modal-kicker"></div>
+      <h2 id="modal-titulo"></h2>
+      <div class="modal-body" id="modal-cuerpo"></div>
+    </article>
+  </div>
+
+  <footer>
+    <div class="wrap">© 2026 the big 3 · Proyecto responsivo con CSS Grid, @media y JavaScript.</div>
+  </footer>
+
+  <script>
+    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const hoy = new Date();
+    document.getElementById('fecha-hoy').textContent = `${hoy.getDate()} de ${meses[hoy.getMonth()]} de ${hoy.getFullYear()}`;
+
+    const secciones = {
+      deporte: {
+        titulo: 'deporte',
+        emoji: '🏀',
+        descripcion: 'Resultados, actividad física y historias deportivas con lectura rápida.',
+        side: 'marcadores',
+        encuesta: '¿Qué deporte te gustaría ver más en el periódico?',
+        opcionesEncuesta: ['Básquet', 'Fútbol', 'Boxeo', 'Fórmula 1'],
+        retos: ['Haz 10 sentadillas y vuelve a leer la nota principal.', 'Adivina el marcador antes de abrir la nota de playoffs.', 'Reta a alguien a decir 3 deportes en 5 segundos.'],
+        trivia: [
+          { pregunta: '¿Qué deporte se juega principalmente con canasta y balón naranja?', opciones: ['Básquet', 'Tenis', 'Boxeo', 'Natación'], correcta: 'Básquet' },
+          { pregunta: '¿En qué deporte se usan guantes y rounds?', opciones: ['Boxeo', 'Fórmula 1', 'Voleibol', 'Golf'], correcta: 'Boxeo' },
+          { pregunta: '¿Qué competencia usa monoplazas en circuitos?', opciones: ['Fórmula 1', 'NBA', 'Roland Garros', 'Liga MX'], correcta: 'Fórmula 1' }
+        ],
+        notas: [
+          ['Liga escolar', 'El básquet juvenil llena las canchas de la ciudad', 'La temporada escolar inició con equipos renovados, partidos cerrados y más público en las gradas.', 'Por Redacción Deportes · Hoy'],
+          ['NBA', 'Los Lakers sorprenden y avanzan en playoffs', 'El equipo ganó con defensa fuerte, tiros decisivos y una noche inspirada de sus figuras.', 'Por Staff · Ayer'],
+          ['Fórmula 1', 'La precisión decide el Gran Premio de Mónaco', 'El circuito urbano volvió a demostrar que un pequeño error puede cambiar toda la carrera.', 'Por Redacción · Hoy'],
+          ['Tenis', 'Una final joven promete ritmo y resistencia', 'Los nuevos talentos del tenis se preparan para un duelo de velocidad y estrategia.', 'Por Staff'],
+          ['Boxeo', 'Una pelea especial emociona a la afición mexicana', 'La función busca reunir deporte, espectáculo y ambiente familiar.', 'Por Staff']
+        ],
+        sidebar: ['Tigres 88 – 84 Halcones', 'Lakers 112 – 108 Celtics', 'Mónaco GP · Carrera cerrada', 'Final escolar este viernes']
+      },
+      musica: {
+        titulo: 'música',
+        emoji: '🎵',
+        descripcion: 'Lanzamientos, conciertos y tendencias musicales sin saturar la página.',
+        side: 'top musical',
+        encuesta: '¿Qué estilo musical pondrías en portada?',
+        opcionesEncuesta: ['Pop', 'Urbano', 'Rock', 'Regional mexicano'],
+        retos: ['Tararea una canción y que alguien adivine el artista.', 'Elige la nota que sería mejor para una playlist.', 'Haz un top 3 de artistas antes de votar.'],
+        trivia: [
+          { pregunta: '¿Qué género suele usar guitarras eléctricas y baterías fuertes?', opciones: ['Rock', 'Salsa', 'Clásica', 'Bolero'], correcta: 'Rock' },
+          { pregunta: '¿Cómo se llama una presentación musical en vivo?', opciones: ['Concierto', 'Editorial', 'Pasarela', 'Receta'], correcta: 'Concierto' },
+          { pregunta: '¿Qué plataforma se usa mucho para escuchar música digital?', opciones: ['Spotify', 'Canva', 'Excel', 'Maps'], correcta: 'Spotify' }
+        ],
+        notas: [
+          ['Pop', 'Una gira mundial rompe récords de venta', 'La producción combina luces, pantallas y un escenario pensado para redes sociales.', 'Por Redacción Música · Hoy'],
+          ['Urbano', 'Un álbum nuevo domina plataformas digitales', 'Las colaboraciones y los coros fáciles lo volvieron tendencia en pocas horas.', 'Por Staff · Ayer'],
+          ['Rock', 'Bandas clásicas preparan fechas en Latinoamérica', 'El regreso emociona a fans de varias generaciones.', 'Por Staff · Hoy'],
+          ['Jazz', 'Festival reúne talento nacional e internacional', 'Tres noches de improvisación demostraron que el género sigue vigente.', 'Por Staff'],
+          ['Electrónica', 'DJs jóvenes cambian el sonido de los festivales', 'La nueva ola mezcla ritmos rápidos, visuales y sonidos futuristas.', 'Por Staff']
+        ],
+        sidebar: ['Bad Bunny · tendencia', 'Taylor Swift · gira', 'Peso Pluma · regional', 'Oasis · regreso']
+      },
+      moda: {
+        titulo: 'moda',
+        emoji: '👗',
+        descripcion: 'Tendencias visuales con estética limpia, práctica y fácil de entender.',
+        side: 'tendencias',
+        encuesta: '¿Qué tendencia usarías más?',
+        opcionesEncuesta: ['Sneakers retro', 'Ropa vintage', 'Tonos neutros', 'Accesorios simples'],
+        retos: ['Arma un outfit mental con solo tres colores.', 'Vota por la tendencia que sí usarías en la escuela.', 'Encuentra la nota con estilo más minimalista.'],
+        trivia: [
+          { pregunta: '¿Qué significa “vintage” en moda?', opciones: ['Ropa de estilo antiguo', 'Ropa deportiva nueva', 'Zapatos de playa', 'Ropa impermeable'], correcta: 'Ropa de estilo antiguo' },
+          { pregunta: '¿Qué prenda se asocia con la cultura sneaker?', opciones: ['Tenis', 'Sombrero', 'Bufanda', 'Corbata'], correcta: 'Tenis' },
+          { pregunta: '¿Qué color combina con el estilo minimalista de esta página?', opciones: ['Verde oliva', 'Neón fosforescente', 'Rosa brillante', 'Morado eléctrico'], correcta: 'Verde oliva' }
+        ],
+        notas: [
+          ['Pasarelas', 'El minimalismo vuelve a dominar la moda actual', 'Prendas limpias, tonos neutros y siluetas cómodas reemplazan estilos recargados.', 'Por Redacción Moda · Hoy'],
+          ['Sostenibilidad', 'La ropa de segunda mano gana popularidad', 'Comprar y reutilizar prendas se volvió una opción económica y responsable.', 'Por Staff · Ayer'],
+          ['Sneakers', 'Los tenis retro vuelven a las calles', 'Modelos inspirados en los noventa aparecen de nuevo en escuelas y redes.', 'Por Staff · Hoy'],
+          ['Belleza', 'El maquillaje natural se vuelve tendencia', 'La idea es verse arreglado sin perder frescura ni simplicidad.', 'Por Staff'],
+          ['Diseño mexicano', 'Creadores nacionales llegan a pasarelas internacionales', 'Diseñadores jóvenes combinan identidad mexicana con cortes modernos.', 'Por Staff']
+        ],
+        sidebar: ['Tonos neutros', 'Lino y mezclilla', 'Sneakers retro', 'Accesorios simples']
+      },
+      tecnologia: {
+        titulo: 'tecnología',
+        emoji: '💻',
+        descripcion: 'Innovación, apps y dispositivos explicados con lenguaje claro.',
+        side: 'gadgets',
+        encuesta: '¿Qué tema de tecnología quieres leer más?',
+        opcionesEncuesta: ['IA', 'Gaming', 'Celulares', 'Apps de estudio'],
+        retos: ['Piensa en una app que te ayude con tareas y compártela.', 'Elige la nota más útil para estudiantes.', 'Adivina qué gadget aparece en la lista lateral.'],
+        trivia: [
+          { pregunta: '¿Qué significa IA?', opciones: ['Inteligencia Artificial', 'Internet Automático', 'Imagen Avanzada', 'Interfaz Antigua'], correcta: 'Inteligencia Artificial' },
+          { pregunta: '¿Qué dispositivo se usa mucho para jugar videojuegos portátiles?', opciones: ['Consola portátil', 'Licuadora', 'Proyector de cine', 'Impresora'], correcta: 'Consola portátil' },
+          { pregunta: '¿Qué mejora buscan muchos celulares nuevos?', opciones: ['Batería y cámara', 'Menos pantalla', 'Sin conexión', 'Peso excesivo'], correcta: 'Batería y cámara' }
+        ],
+        notas: [
+          ['IA', 'La inteligencia artificial transforma tareas escolares', 'Las herramientas digitales ayudan a investigar, organizar ideas y crear contenido con más rapidez.', 'Por Redacción Tech · Hoy'],
+          ['Celulares', 'Nuevas pantallas prometen mejor batería', 'Las marcas compiten por brillo, carga rápida y cámaras más estables.', 'Por Staff · Hoy'],
+          ['Gaming', 'Las laptops ligeras mejoran para videojuegos', 'Los nuevos equipos prometen ventilación más eficiente y gráficos más estables.', 'Por Staff · Ayer'],
+          ['Movilidad', 'La tecnología eléctrica llega a más ciudades', 'Cada vez hay más estaciones de carga y modelos accesibles.', 'Por Staff'],
+          ['Espacio', 'Nuevas misiones despiertan interés por Marte', 'La exploración espacial vuelve a inspirar a estudiantes y científicos.', 'Por Staff']
+        ],
+        sidebar: ['Audífonos ANC', 'Relojes inteligentes', 'Consolas portátiles', 'Apps de estudio']
+      },
+      comida: {
+        titulo: 'comida',
+        emoji: '🌮',
+        descripcion: 'Sabores, recetas y cultura gastronómica en formato breve.',
+        side: 'sabores',
+        encuesta: '¿Qué comida pondrías en la portada?',
+        opcionesEncuesta: ['Tacos', 'Ramen', 'Postres', 'Comida casera'],
+        retos: ['Elige una nota y piensa con qué bebida la acompañarías.', 'Vota por el platillo que se te antojó más.', 'Nombra tres comidas mexicanas en 10 segundos.'],
+        trivia: [
+          { pregunta: '¿Qué platillo mexicano suele llevar tortilla y salsa?', opciones: ['Taco', 'Sushi', 'Croissant', 'Ramen'], correcta: 'Taco' },
+          { pregunta: '¿Qué platillo japonés se volvió popular por su caldo y fideos?', opciones: ['Ramen', 'Pozole', 'Hamburguesa', 'Tamales'], correcta: 'Ramen' },
+          { pregunta: '¿Qué comida se asocia más con recetas de casa?', opciones: ['Comida casera', 'Comida espacial', 'Comida invisible', 'Comida digital'], correcta: 'Comida casera' }
+        ],
+        notas: [
+          ['México', 'La cocina mexicana sigue conquistando el mundo', 'Tacos, mole, pozole y salsas muestran la fuerza cultural de la gastronomía nacional.', 'Por Redacción Gastronomía · Hoy'],
+          ['Tendencia', 'El ramen artesanal gana popularidad entre jóvenes', 'Su sabor intenso y la posibilidad de personalizarlo lo vuelven favorito en redes.', 'Por Staff · Ayer'],
+          ['Casa', 'Los platillos caseros vuelven por economía y sabor', 'Cocinar en casa permite ahorrar y controlar mejor los ingredientes.', 'Por Staff · Hoy'],
+          ['Viral', 'Una receta de birria se vuelve tendencia', 'El video de preparación acumuló miles de reacciones por su sencillez y sabor.', 'Por Staff'],
+          ['Postres', 'Los postres pequeños dominan cafeterías', 'Porciones individuales y presentaciones limpias ganan espacio en vitrinas.', 'Por Staff']
+        ],
+        sidebar: ['Tacos al pastor', 'Ramen artesanal', 'Agua fresca', 'Postres virales']
+      }
+    };
+
+    const contenido = document.getElementById('contenido');
+    let seccionActual = 'deporte';
+
+    const estado = Object.fromEntries(Object.keys(secciones).map(id => [id, {
+      votos: Array(secciones[id].opcionesEncuesta.length).fill(0),
+      triviaIndex: 0,
+      puntaje: 0,
+      respondida: false,
+      retoIndex: 0
+    }]));
+
+    function crearTarjeta(sectionId, nota, index) {
+      const featured = index === 0;
+      const small = index > 0 && index < 3;
+      return `
+        <article class="card ${featured ? 'featured' : ''} ${small ? 'small' : ''}" data-open-note="${sectionId}" data-note-index="${index}" tabindex="0">
+          ${featured ? `<span class="emoji" aria-hidden="true">${secciones[sectionId].emoji}</span>` : ''}
+          <div class="kicker">${nota[0]}</div>
+          <h2>${nota[1]}</h2>
+          <p class="summary">${nota[2]}</p>
+          <div class="byline">${nota[3]}</div>
+          <div class="actions">
+            <button class="chip-button" data-like type="button">Me gusta <span>0</span></button>
+            <button class="chip-button" data-save type="button">Guardar</button>
+          </div>
+        </article>
+      `;
+    }
+
+    function crearWidgets(sectionId) {
+      const sec = secciones[sectionId];
+      return `
+        <section class="interactive-zone" aria-label="Zona interactiva de ${sec.titulo}">
+          <article class="widget" data-widget="poll" data-section="${sectionId}">
+            <div class="widget-label">encuesta</div>
+            <h3>${sec.encuesta}</h3>
+            <p>Vota una opción. Los porcentajes se actualizan solo para esta sección.</p>
+            <div class="option-list" data-poll-options="${sectionId}"></div>
+            <div class="result" data-poll-result="${sectionId}">Aún no hay votos.</div>
+            <div data-poll-bars="${sectionId}"></div>
+          </article>
+
+          <article class="widget" data-widget="challenge" data-section="${sectionId}">
+            <div class="widget-label">mini juego</div>
+            <h3>Reto rápido de ${sec.titulo}</h3>
+            <p>Presiona el botón para cambiar el reto relacionado con la sección.</p>
+            <div class="challenge-box">
+              <strong data-challenge-text="${sectionId}">${sec.retos[0]}</strong>
+              <button class="btn" data-next-challenge="${sectionId}" type="button">Nuevo reto</button>
+            </div>
+          </article>
+
+          <article class="widget" data-widget="quiz" data-section="${sectionId}">
+            <div class="widget-label">trivia</div>
+            <h3>Trivia de ${sec.titulo}</h3>
+            <p data-quiz-question="${sectionId}"></p>
+            <div class="option-list" data-quiz-options="${sectionId}"></div>
+            <p class="result" data-quiz-result="${sectionId}"></p>
+            <button class="btn" data-next-question="${sectionId}" type="button">Siguiente pregunta</button>
+          </article>
+        </section>
+      `;
+    }
+
+    function crearPagina() {
+      contenido.innerHTML = Object.entries(secciones).map(([id, sec], sectionIndex) => `
+        <section class="section-panel ${sectionIndex === 0 ? 'visible' : ''}" id="sec-${id}">
+          <div class="section-head">
+            <h2 class="section-title"><span aria-hidden="true">${sec.emoji}</span>${sec.titulo}</h2>
+            <p class="section-desc">${sec.descripcion}</p>
+          </div>
+
+          <div class="news-grid">
+            ${sec.notas.slice(0, 3).map((nota, index) => crearTarjeta(id, nota, index)).join('')}
+          </div>
+
+          <div class="more-grid">
+            <div class="two-grid">
+              ${sec.notas.slice(3).map((nota, index) => crearTarjeta(id, nota, index + 3)).join('')}
+            </div>
+            <aside class="side-card">
+              <div class="side-title">${sec.side}</div>
+              ${sec.sidebar.map((item, index) => `
+                <div class="side-item" data-open-note="${id}" data-note-index="${Math.min(index, sec.notas.length - 1)}" tabindex="0">
+                  <div class="num">0${index + 1}</div>
+                  <div><strong>${item}</strong><span>Actualización breve</span></div>
+                </div>
+              `).join('')}
+            </aside>
+          </div>
+
+          ${crearWidgets(id)}
+        </section>
+      `).join('');
+
+      Object.keys(secciones).forEach(id => {
+        crearEncuesta(id);
+        cargarTrivia(id);
+      });
+    }
+
+    function cambiarSeccion(id) {
+      seccionActual = id;
+      document.body.dataset.section = id;
+      document.querySelectorAll('.section-panel').forEach(panel => panel.classList.remove('visible'));
+      document.getElementById(`sec-${id}`).classList.add('visible');
+      document.querySelectorAll('nav button').forEach(btn => btn.classList.toggle('active', btn.dataset.sectionTarget === id));
+    }
+
+    function abrirModal(sectionId, index) {
+      const nota = secciones[sectionId].notas[index];
+      document.body.dataset.section = sectionId;
+      document.getElementById('modal-kicker').textContent = nota[0];
+      document.getElementById('modal-titulo').textContent = nota[1];
+      document.getElementById('modal-cuerpo').innerHTML = `
+        <p>${nota[2]}</p>
+        <p>Esta nota mantiene una lectura clara, con colores suaves, líneas divisorias y botones interactivos para que la página se vea limpia sin quedar demasiado simple.</p>
+      `;
+      const modal = document.getElementById('modal');
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function cerrarModal() {
+      const modal = document.getElementById('modal');
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.style.overflow = '';
+      document.body.dataset.section = seccionActual;
+    }
+
+    function crearEncuesta(sectionId) {
+      const contenedor = document.querySelector(`[data-poll-options="${sectionId}"]`);
+      const sec = secciones[sectionId];
+      contenedor.innerHTML = sec.opcionesEncuesta.map((opcion, index) => `
+        <button data-vote="${sectionId}" data-vote-index="${index}" type="button">${opcion}</button>
+      `).join('');
+      actualizarEncuesta(sectionId);
+    }
+
+    function votar(sectionId, optionIndex) {
+      estado[sectionId].votos[optionIndex] += 1;
+      actualizarEncuesta(sectionId);
+    }
+
+    function actualizarEncuesta(sectionId) {
+      const sec = secciones[sectionId];
+      const votos = estado[sectionId].votos;
+      const total = votos.reduce((sum, value) => sum + value, 0);
+      const ganadorIndex = votos.indexOf(Math.max(...votos));
+      const resultado = document.querySelector(`[data-poll-result="${sectionId}"]`);
+      const barras = document.querySelector(`[data-poll-bars="${sectionId}"]`);
+
+      resultado.textContent = total === 0
+        ? 'Aún no hay votos.'
+        : `Votos: ${total} · Va ganando: ${sec.opcionesEncuesta[ganadorIndex]}`;
+
+      barras.innerHTML = sec.opcionesEncuesta.map((opcion, index) => {
+        const count = votos[index];
+        const porcentaje = total === 0 ? 0 : Math.round((count / total) * 100);
+        return `
+          <div class="poll-row">
+            <div class="poll-top"><span>${opcion}</span><strong>${count} · ${porcentaje}%</strong></div>
+            <div class="bar"><span style="width: ${porcentaje}%"></span></div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function siguienteReto(sectionId) {
+      const secEstado = estado[sectionId];
+      const retos = secciones[sectionId].retos;
+      secEstado.retoIndex = (secEstado.retoIndex + 1) % retos.length;
+      document.querySelector(`[data-challenge-text="${sectionId}"]`).textContent = retos[secEstado.retoIndex];
+    }
+
+    function cargarTrivia(sectionId) {
+      const sec = secciones[sectionId];
+      const secEstado = estado[sectionId];
+      const item = sec.trivia[secEstado.triviaIndex];
+      secEstado.respondida = false;
+
+      document.querySelector(`[data-quiz-question="${sectionId}"]`).textContent = `${secEstado.triviaIndex + 1}. ${item.pregunta}`;
+      document.querySelector(`[data-quiz-result="${sectionId}"]`).textContent = `Puntaje: ${secEstado.puntaje}/${sec.trivia.length}`;
+
+      const opciones = document.querySelector(`[data-quiz-options="${sectionId}"]`);
+      opciones.innerHTML = '';
+      item.opciones.forEach(opcion => {
+        const boton = document.createElement('button');
+        boton.type = 'button';
+        boton.textContent = opcion;
+        boton.dataset.answer = sectionId;
+        opciones.appendChild(boton);
+      });
+    }
+
+    function responderTrivia(sectionId, botonSeleccionado) {
+      const sec = secciones[sectionId];
+      const secEstado = estado[sectionId];
+      if (secEstado.respondida) return;
+      secEstado.respondida = true;
+
+      const item = sec.trivia[secEstado.triviaIndex];
+      const correcta = botonSeleccionado.textContent === item.correcta;
+      if (correcta) secEstado.puntaje += 1;
+
+      document.querySelectorAll(`[data-quiz-options="${sectionId}"] button`).forEach(boton => {
+        boton.disabled = true;
+        if (boton.textContent === item.correcta) boton.classList.add('correct');
+      });
+
+      if (!correcta) botonSeleccionado.classList.add('wrong');
+
+      document.querySelector(`[data-quiz-result="${sectionId}"]`).textContent = correcta
+        ? `Correcto. Puntaje: ${secEstado.puntaje}/${sec.trivia.length}`
+        : `Incorrecto. Era: ${item.correcta}. Puntaje: ${secEstado.puntaje}/${sec.trivia.length}`;
+    }
+
+    function siguienteTrivia(sectionId) {
+      const secEstado = estado[sectionId];
+      const total = secciones[sectionId].trivia.length;
+      secEstado.triviaIndex = (secEstado.triviaIndex + 1) % total;
+      if (secEstado.triviaIndex === 0) secEstado.puntaje = 0;
+      cargarTrivia(sectionId);
+    }
+
+    crearPagina();
+
+    document.addEventListener('click', event => {
+      const navButton = event.target.closest('[data-section-target]');
+      if (navButton) cambiarSeccion(navButton.dataset.sectionTarget);
+
+      const voteButton = event.target.closest('[data-vote]');
+      if (voteButton) votar(voteButton.dataset.vote, Number(voteButton.dataset.voteIndex));
+
+      const answerButton = event.target.closest('[data-answer]');
+      if (answerButton) responderTrivia(answerButton.dataset.answer, answerButton);
+
+      const nextQuestionButton = event.target.closest('[data-next-question]');
+      if (nextQuestionButton) siguienteTrivia(nextQuestionButton.dataset.nextQuestion);
+
+      const challengeButton = event.target.closest('[data-next-challenge]');
+      if (challengeButton) siguienteReto(challengeButton.dataset.nextChallenge);
+
+      const likeButton = event.target.closest('[data-like]');
+      if (likeButton) {
+        event.stopPropagation();
+        const span = likeButton.querySelector('span');
+        span.textContent = Number(span.textContent) + 1;
+      }
+
+      const saveButton = event.target.closest('[data-save]');
+      if (saveButton) {
+        event.stopPropagation();
+        saveButton.textContent = 'Guardado';
+        saveButton.disabled = true;
+      }
+
+      const note = event.target.closest('[data-open-note]');
+      if (note && !event.target.closest('button')) abrirModal(note.dataset.openNote, Number(note.dataset.noteIndex));
+    });
+
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape') cerrarModal();
+      if (event.key === 'Enter') {
+        const note = event.target.closest('[data-open-note]');
+        if (note) abrirModal(note.dataset.openNote, Number(note.dataset.noteIndex));
+      }
+    });
+
+    document.getElementById('modal-close').addEventListener('click', cerrarModal);
+    document.getElementById('modal').addEventListener('click', event => {
+      if (event.target.id === 'modal') cerrarModal();
+    });
+    document.getElementById('toggle-compact').addEventListener('click', () => {
+      document.body.classList.toggle('compact');
+    });
+    document.getElementById('go-top').addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
 </body>
 </html>
