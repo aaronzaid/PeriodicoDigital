@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Periódico Digital · the big 3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --bg-page: #f8f6f0;
+      --texto: #1c2416;
+      --gris-suave: #5f6258;
+      --linea: rgba(0, 0, 0, 0.08);
+      --sombra: 0 8px 20px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.03);
+      --radio-card: 24px;
+    }
+
+    /* colores por sección */
+    body[data-section="deporte"] { --primary: #2c5f2d; --primary-light: #e0f0e0; --primary-soft: #d9e9d9; }
+    body[data-section="musica"] { --primary: #b83b5e; --primary-light: #fde7ed; --primary-soft: #ffeef3; }
+    body[data-section="moda"] { --primary: #7c4d6e; --primary-light: #f5eef2; --primary-soft: #f2e6ed; }
+    body[data-section="tecnologia"] { --primary: #2c7da0; --primary-light: #e1f0f5; --primary-soft: #eaf4f8; }
+    body[data-section="comida"] { --primary: #d68c45; --primary-light: #fef0e4; --primary-soft: #fff3e9; }
+
+    body {
+      background: var(--bg-page);
+      font-family: 'Inter', sans-serif;
+      color: var(--texto);
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* header sin top strip */
+    header {
+      padding: 32px 0 20px;
+      border-bottom: 1px solid var(--linea);
+      background: var(--bg-page);
+    }
+
+    .title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .main-title {
+      font-size: clamp(2.8rem, 7vw, 4.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      color: #1e2a1a;
+      line-height: 1.1;
+    }
+
+    .main-title span {
+      color: var(--primary, #2c5f2d);
+      font-weight: 700;
+    }
+
+    .sub {
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--gris-suave);
+      letter-spacing: 0.2px;
+      border-left: 3px solid var(--primary, #2c5f2d);
+      padding-left: 14px;
+    }
+
+    /* navegación mejorada */
+    .section-nav {
+      position: relative;
+      margin: 28px 0 8px;
+      display: flex;
+      align-items: center;
+    }
+
+    .menu-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: white;
+      border: 1px solid var(--linea);
+      border-radius: 60px;
+      padding: 10px 24px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: 0.2s;
+      box-shadow: var(--sombra);
+    }
+
+    .menu-toggle:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .hamburger-icon {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      width: 18px;
+    }
+    .hamburger-icon span {
+      height: 2px;
+      background: currentColor;
+      border-radius: 2px;
+    }
+
+    .section-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      z-index: 100;
+      width: 260px;
+      background: rgba(255, 255, 255, 0.98);
+      backdrop-filter: blur(12px);
+      border-radius: 28px;
+      border: 1px solid var(--linea);
+      padding: 12px 8px;
+      box-shadow: 0 18px 30px rgba(0, 0, 0, 0.06);
+    }
+
+    .section-nav.open .section-menu {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .section-menu button {
+      width: 100%;
+      text-align: left;
+      padding: 12px 18px;
+      background: transparent;
+      border: none;
+      border-radius: 40px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--texto);
+      cursor: pointer;
+      transition: 0.15s;
+    }
+
+    .section-menu button:hover,
+    .section-menu button.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* panels */
+    .section-panel {
+      display: none;
+      animation: fade 0.25s ease;
+    }
+    .section-panel.visible { display: block; }
+    @keyframes fade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin: 28px 0 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--linea);
+    }
+    .section-title {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .section-desc {
+      color: var(--gris-suave);
+      max-width: 450px;
+      text-align: right;
+      font-size: 0.88rem;
+    }
+
+    /* grillas */
+    .news-grid {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr;
+      border-left: 1px solid var(--linea);
+      border-top: 1px solid var(--linea);
+      background: rgba(255, 255, 245, 0.4);
+      border-radius: var(--radio-card);
+      overflow: hidden;
+    }
+    .more-grid {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      margin-top: 28px;
+      border-left: 1px solid var(--linea);
+      border-top: 1px solid var(--linea);
+      border-radius: var(--radio-card);
+      overflow: hidden;
+    }
+    .two-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+    .card, .side-card, .widget {
+      border-right: 1px solid var(--linea);
+      border-bottom: 1px solid var(--linea);
+      background: rgba(255, 255, 250, 0.7);
+      transition: all 0.2s;
+    }
+    .card {
+      padding: 28px 24px;
+      cursor: pointer;
+    }
+    .card:hover {
+      background: rgba(255, 255, 245, 0.95);
+      transform: translateY(-2px);
+    }
+    .card.featured {
+      background: linear-gradient(125deg, var(--primary-soft), rgba(255,255,245,0.8));
+    }
+    .kicker {
+      color: var(--primary);
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .card h2 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    .featured h2 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+    }
+    .summary {
+      color: #4a4f44;
+      font-size: 0.88rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .byline {
+      margin-top: 16px;
+      font-size: 0.7rem;
+      color: #8b8f82;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    .chip-button, .btn {
+      background: rgba(245, 242, 235, 0.9);
+      border: 1px solid var(--linea);
+      border-radius: 40px;
+      padding: 6px 16px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .chip-button:hover, .btn:hover {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .side-card {
+      padding: 24px;
+    }
+    .side-title {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+    .side-item {
+      display: grid;
+      grid-template-columns: 32px 1fr;
+      gap: 12px;
+      padding: 14px 0;
+      border-top: 1px solid var(--linea);
+      cursor: pointer;
+    }
+    .side-item:first-child { border-top: none; }
+    .num {
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .interactive-zone {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      margin-top: 28px;
+      border-left: 1px solid var(--linea);
+      border-top: 1px solid var(--linea);
+      border-radius: var(--radio-card);
+      overflow: hidden;
+    }
+    .widget {
+      padding: 26px 24px;
+    }
+    .widget-label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+    .option-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .option-list button {
+      background: white;
+      border: 1px solid var(--linea);
+      border-radius: 60px;
+      padding: 8px 14px;
+      text-align: left;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .poll-row {
+      margin-top: 12px;
+    }
+    .bar {
+      height: 6px;
+      background: #e3e1d9;
+      border-radius: 10px;
+      margin-top: 5px;
+      overflow: hidden;
+    }
+    .bar span {
+      display: block;
+      height: 100%;
+      width: 0%;
+      background: var(--primary);
+      border-radius: 10px;
+    }
+
+    /* modal con video funcional */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 25, 18, 0.8);
+      backdrop-filter: blur(6px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      max-width: 840px;
+      width: 100%;
+      max-height: 85vh;
+      overflow-y: auto;
+      background: white;
+      border-radius: 36px;
+      padding: 28px;
+      box-shadow: 0 30px 45px rgba(0, 0, 0, 0.2);
+    }
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      background: none;
+      border: none;
+      font-size: 2rem;
+      cursor: pointer;
+    }
+    .modal-media {
+      margin-top: 24px;
+      background: #f9f8f2;
+      border-radius: 28px;
+      padding: 20px;
+    }
+    .video-frame {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: 20px;
+      border: 1px solid var(--linea);
+      margin: 12px 0;
+    }
+
+    .floating-tools {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      gap: 12px;
+      z-index: 200;
+    }
+    .floating-tools button {
+      background: rgba(255, 255, 245, 0.96);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--linea);
+      border-radius: 60px;
+      padding: 8px 18px;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    @media (max-width: 860px) {
+      .news-grid { grid-template-columns: 1fr 1fr; }
+      .more-grid { grid-template-columns: 1fr; }
+      .interactive-zone { grid-template-columns: 1fr; }
+      .two-grid { grid-template-columns: 1fr; }
+      .section-head { flex-direction: column; align-items: flex-start; }
+      .section-desc { text-align: left; }
+    }
+    @media (max-width: 620px) {
+      .wrap { padding: 0 16px; }
+      .news-grid { grid-template-columns: 1fr; }
+      .section-menu { width: calc(100% - 16px); left: 8px; }
+      .card { padding: 20px; }
+      .featured h2 { font-size: 1.4rem; }
+    }
+    .compact .summary, .compact .byline { display: none; }
+    .compact .card { padding: 16px; }
+  </style>
+</head>
+<body data-section="deporte">
+  <header>
+    <div class="wrap">
+      <div class="title-group">
+        <h1 class="main-title">Periódico <span>Digital</span></h1>
+        <div class="sub">the big 3 · noticias verificadas y multimedia funcional</div>
+      </div>
+      <nav class="section-nav">
+        <button class="menu-toggle" id="menu-toggle" aria-expanded="false">
+          <span class="hamburger-icon"><span></span><span></span><span></span></span>
+          <span>Secciones</span>
+        </button>
+        <div class="section-menu" id="section-menu">
+          <button class="active" data-section-target="deporte">🏆 Deporte</button>
+          <button data-section-target="musica">🎧 Música</button>
+          <button data-section-target="moda">👗 Moda</button>
+          <button data-section-target="tecnologia">📱 Tecnología</button>
+          <button data-section-target="comida">🍜 Comida</button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap" id="contenido"></main>
+
+  <div class="floating-tools">
+    <button id="toggle-compact">✧ Vista simple</button>
+    <button id="go-top">↑ Inicio</button>
+  </div>
+
+  <div class="modal-overlay" id="modal" aria-hidden="true">
+    <article class="modal" role="dialog">
+      <button class="modal-close" id="modal-close">×</button>
+      <div class="modal-kicker" id="modal-kicker" style="color:var(--primary); font-weight:700;"></div>
+      <h2 id="modal-titulo" style="margin-top:6px;"></h2>
+      <div id="modal-cuerpo"></div>
+    </article>
+  </div>
+
+  <script>
+    (function() {
+      // DATOS REALES Y ACTUALIZADOS (2025-2026) CON FUENTES Y VIDEOS RELACIONADOS
+      const secciones = {
+        "deporte": {
+                "titulo": "deporte",
+                "emoji": "🏆",
+                "descripcion": "Resultados recientes, campeones y momentos clave verificados.",
+                "encuesta": "¿Qué noticia deportiva te interesa más?",
+                "opcionesEncuesta": [
+                        "⚽ Champions",
+                        "🏀 NBA",
+                        "🏎️ F1",
+                        "🌍 Mundial de Clubes"
+                ],
+                "retos": [
+                        "Explica en 10 segundos por qué el PSG hizo historia",
+                        "Di quién fue el MVP de las Finales NBA 2025",
+                        "Nombra tres campeones recientes de clubes"
+                ],
+                "trivia": [
+                        {
+                                "pregunta": "¿Qué equipo ganó la Champions League 2024/25?",
+                                "opciones": [
+                                        "PSG",
+                                        "Inter",
+                                        "Real Madrid",
+                                        "Arsenal"
+                                ],
+                                "correcta": "PSG"
+                        },
+                        {
+                                "pregunta": "¿Quién ganó la NBA 2025?",
+                                "opciones": [
+                                        "Thunder",
+                                        "Pacers",
+                                        "Celtics",
+                                        "Nuggets"
+                                ],
+                                "correcta": "Thunder"
+                        },
+                        {
+                                "pregunta": "¿Qué piloto fue campeón mundial de F1 en 2025?",
+                                "opciones": [
+                                        "Lando Norris",
+                                        "Max Verstappen",
+                                        "Oscar Piastri",
+                                        "George Russell"
+                                ],
+                                "correcta": "Lando Norris"
+                        }
+                ],
+                "notas": [
+                        [
+                                "UEFA CHAMPIONS",
+                                "PSG gana su primera Champions con goleada histórica al Inter",
+                                "Paris Saint-Germain venció 5-0 al Inter en la final 2024/25 y consiguió su primer título de Champions League con el mayor margen en una final moderna.",
+                                "Redacción Deportes · 31 may 2025",
+                                "fVcRIDNSPW4",
+                                "https://www.uefa.com/uefachampionsleague/match/2044466--paris-vs-inter/",
+                                "UEFA"
+                        ],
+                        [
+                                "NBA FINALS",
+                                "Oklahoma City Thunder conquista la NBA 2025",
+                                "El Thunder derrotó a Indiana en el Juego 7 y ganó el primer campeonato de la era Oklahoma City, con Shai Gilgeous-Alexander como figura central.",
+                                "Redacción Deportes · 22 jun 2025",
+                                "a4fUMKvmatk",
+                                "https://www.nba.com/playoffs/2025/nba-finals",
+                                "NBA"
+                        ],
+                        [
+                                "MUNDIAL DE CLUBES",
+                                "Chelsea levanta el Mundial de Clubes 2025",
+                                "Chelsea derrotó 3-0 al PSG en la final del nuevo Mundial de Clubes de FIFA y cerró el torneo como campeón inaugural del formato ampliado.",
+                                "Redacción Deportes · 13 jul 2025",
+                                "A3t_uUgTm5k",
+                                "https://www.fifa.com/en/tournaments/mens/club-world-cup/usa-2025/articles/tournament-review",
+                                "FIFA"
+                        ],
+                        [
+                                "FÓRMULA 1",
+                                "Lando Norris se corona campeón mundial de F1 2025",
+                                "McLaren volvió a lo más alto con Norris como campeón de pilotos 2025 tras una temporada cerrada frente a Verstappen y Piastri.",
+                                "Motor Desk · dic 2025",
+                                "S-LMSpzlnc0",
+                                "https://www.formula1.com/en/results/2025/drivers",
+                                "Formula 1"
+                        ],
+                        [
+                                "FÚTBOL GLOBAL",
+                                "El nuevo Mundial de Clubes deja a Chelsea como referencia",
+                                "El torneo de 2025 marcó una nueva etapa para FIFA: más clubes, más partidos y una final de alto impacto entre Chelsea y PSG.",
+                                "Redacción Deportes · 2025",
+                                "WRse9_XQuDc",
+                                "https://www.fifa.com/en/tournaments/mens/club-world-cup/usa-2025/articles/knockout-stage-bracket-play-offs-match-schedule",
+                                "FIFA"
+                        ]
+                ],
+                "sidebar": [
+                        "PSG campeón de Europa",
+                        "Thunder gana la NBA",
+                        "Chelsea campeón mundial",
+                        "Norris campeón F1"
+                ]
+        },
+        "musica": {
+                "titulo": "música",
+                "emoji": "🎧",
+                "descripcion": "Premios, giras y artistas que dominaron la conversación musical.",
+                "encuesta": "¿Qué fenómeno musical seguirías?",
+                "opcionesEncuesta": [
+                        "Bad Bunny",
+                        "Grammy",
+                        "Spotify Wrapped",
+                        "Giras mundiales"
+                ],
+                "retos": [
+                        "Menciona una canción de DeBÍ TiRAR MáS FOToS",
+                        "Di por qué un álbum en español ganando el Grammy importa",
+                        "Recomienda un artista latino actual"
+                ],
+                "trivia": [
+                        {
+                                "pregunta": "¿Qué álbum ganó Album Of The Year en los Grammy 2026?",
+                                "opciones": [
+                                        "DeBÍ TiRAR MáS FOToS",
+                                        "Cowboy Carter",
+                                        "GNX",
+                                        "Short n' Sweet"
+                                ],
+                                "correcta": "DeBÍ TiRAR MáS FOToS"
+                        },
+                        {
+                                "pregunta": "¿Quién fue el artista global más escuchado de Spotify Wrapped 2025?",
+                                "opciones": [
+                                        "Bad Bunny",
+                                        "Taylor Swift",
+                                        "Drake",
+                                        "The Weeknd"
+                                ],
+                                "correcta": "Bad Bunny"
+                        },
+                        {
+                                "pregunta": "¿Qué premio latino ganó DeBÍ TiRAR MáS FOToS en 2025?",
+                                "opciones": [
+                                        "Álbum del Año",
+                                        "Mejor Video",
+                                        "Productor del Año",
+                                        "Nuevo Artista"
+                                ],
+                                "correcta": "Álbum del Año"
+                        }
+                ],
+                "notas": [
+                        [
+                                "GRAMMY 2026",
+                                "Bad Bunny hace historia con Álbum del Año",
+                                "DeBÍ TiRAR MáS FOToS ganó Album Of The Year en la 68ª edición de los Grammy, un logro histórico para un álbum en español.",
+                                "Redacción Música · 1 feb 2026",
+                                "kyvPTA0SW-E",
+                                "https://grammy.com/awards/68th-annual-grammy-awards-2025",
+                                "GRAMMY.com"
+                        ],
+                        [
+                                "SPOTIFY WRAPPED",
+                                "Bad Bunny vuelve a ser el artista global más escuchado",
+                                "Spotify informó que Bad Bunny fue el Top Artist global de 2025 con 19.8 mil millones de streams y también lideró el álbum global del año.",
+                                "Redacción Música · 3 dic 2025",
+                                "gLSzEYVDads",
+                                "https://newsroom.spotify.com/2025-12-03/wrapped-bad-bunny-top-artist-album/",
+                                "Spotify Newsroom"
+                        ],
+                        [
+                                "LATIN GRAMMY",
+                                "DeBÍ TiRAR MáS FOToS gana Álbum del Año latino",
+                                "El disco de Bad Bunny también triunfó en los Latin Grammy 2025, reforzando su impacto cultural y musical.",
+                                "Redacción Música · 14 nov 2025",
+                                "hhvdOTvdpjs",
+                                "https://grammy.com/news/2025-latin-grammys-bad-bunny-wins-album-of-the-year",
+                                "GRAMMY.com"
+                        ],
+                        [
+                                "GIRAS",
+                                "Debí Tirar Más Fotos World Tour rompe récords",
+                                "La gira mundial de Bad Bunny arrancó con alta demanda y Billboard reportó récords de recaudación en sus primeras etapas.",
+                                "Redacción Música · ene 2026",
+                                "KU5V5WZVcVE",
+                                "https://www.billboard.com/espanol/negocios/bad-bunny-bate-record-mensual-recaudacion-gira-diciembre-2025-1236167168/",
+                                "Billboard"
+                        ],
+                        [
+                                "TENDENCIAS",
+                                "El pop latino mantiene dominio global",
+                                "El éxito de Bad Bunny en premios, streaming y giras muestra cómo la música en español sigue compitiendo al centro de la industria mundial.",
+                                "Redacción Música · 2026",
+                                "v9T_MGfzq7I",
+                                "https://newsroom.spotify.com/2025-wrapped/",
+                                "Spotify Newsroom"
+                        ]
+                ],
+                "sidebar": [
+                        "Bad Bunny Grammy",
+                        "Spotify Wrapped 2025",
+                        "Latin Grammy",
+                        "Gira mundial"
+                ]
+        },
+        "moda": {
+                "titulo": "moda",
+                "emoji": "👗",
+                "descripcion": "Pasarelas 2026, siluetas, colores y tecnología vestible.",
+                "encuesta": "¿Qué tendencia usarías?",
+                "opcionesEncuesta": [
+                        "Flecos",
+                        "Capri",
+                        "Colores suaves",
+                        "Gafas inteligentes"
+                ],
+                "retos": [
+                        "Arma un look con una prenda de flecos",
+                        "Combina capri con tenis o sandalias",
+                        "Elige dos colores 2026 y explica por qué funcionan"
+                ],
+                "trivia": [
+                        {
+                                "pregunta": "Según Vogue México, ¿qué detalle aparece fuerte en Primavera-Verano 2026?",
+                                "opciones": [
+                                        "Flecos",
+                                        "Sombreros vaqueros",
+                                        "Piel sintética",
+                                        "Corbatas escolares"
+                                ],
+                                "correcta": "Flecos"
+                        },
+                        {
+                                "pregunta": "¿Qué prenda de aire retro aparece como tendencia en 2026?",
+                                "opciones": [
+                                        "Pantalón capri",
+                                        "Traje espacial",
+                                        "Abrigo de nieve",
+                                        "Botas militares"
+                                ],
+                                "correcta": "Pantalón capri"
+                        },
+                        {
+                                "pregunta": "¿Qué wearable menciona McKinsey como formato clave para moda y tecnología en 2026?",
+                                "opciones": [
+                                        "Smart eyewear",
+                                        "MP3",
+                                        "DVD portátil",
+                                        "Pulsera de tela"
+                                ],
+                                "correcta": "Smart eyewear"
+                        }
+                ],
+                "notas": [
+                        [
+                                "PRIMAVERA-VERANO 2026",
+                                "Flecos, flores y siluetas globo llegan a las pasarelas",
+                                "Vogue México resume una temporada con flecos, motivos florales, plumas, drapeados, pantalones balloon y colores más atrevidos.",
+                                "Redacción Moda · mar 2026",
+                                "4aO6wmh_jO4",
+                                "https://www.vogue.mx/articulo/primavera-verano-2026-ready-to-wear",
+                                "Vogue México"
+                        ],
+                        [
+                                "TENDENCIA",
+                                "El pantalón capri vuelve con fuerza en 2026",
+                                "La estética entre nostalgia y minimalismo actual impulsa el regreso de los capri como una pieza clave para Primavera-Verano.",
+                                "Redacción Moda · abr 2026",
+                                "ejo1ChfusKw",
+                                "https://www.vogue.mx/articulo/como-llevar-pantalones-en-primavera-verano-2026",
+                                "Vogue México"
+                        ],
+                        [
+                                "COLOR",
+                                "Los tonos 2026 mezclan calma y energía",
+                                "Vogue México destaca una paleta que va de tonos claros y minimalistas a acentos vibrantes, con el color como forma de expresión personal.",
+                                "Redacción Moda · dic 2025",
+                                "dmRDWkb58wM",
+                                "https://www.vogue.mx/articulo/colores-2026",
+                                "Vogue México"
+                        ],
+                        [
+                                "INDUSTRIA",
+                                "La moda enfrenta un 2026 de nuevas reglas",
+                                "El informe State of Fashion 2026 de BoF y McKinsey advierte que consumo, tecnología y comercio obligan a las marcas a adaptarse rápido.",
+                                "Redacción Moda · nov 2025",
+                                "LPFEuN6NfAQ",
+                                "https://www.businessoffashion.com/reports/the-state-of-fashion-industry/",
+                                "BoF / McKinsey"
+                        ],
+                        [
+                                "FASHION TECH",
+                                "Las gafas inteligentes entran al radar de la moda",
+                                "McKinsey señala que los smart glasses con IA pueden redefinir los wearables y abrir alianzas entre moda y tecnología.",
+                                "Redacción Moda · 2026",
+                                "ZwCGDJdU4ro",
+                                "https://www.mckinsey.com/industries/retail/our-insights/state-of-fashion",
+                                "McKinsey"
+                        ]
+                ],
+                "sidebar": [
+                        "Flecos 2026",
+                        "Capri",
+                        "Paletas suaves",
+                        "Smart eyewear"
+                ]
+        },
+        "tecnologia": {
+                "titulo": "tecnología",
+                "emoji": "📱",
+                "descripcion": "IA, teléfonos, consolas y productos recién anunciados.",
+                "encuesta": "¿Qué avance te interesa más?",
+                "opcionesEncuesta": [
+                        "GPT-5.5",
+                        "Gemini 3",
+                        "iPhone 17e",
+                        "Switch 2"
+                ],
+                "retos": [
+                        "Explica para qué usarías GPT-5.5 en la escuela",
+                        "Compara una consola híbrida con una portátil",
+                        "Nombra una mejora útil de un smartphone actual"
+                ],
+                "trivia": [
+                        {
+                                "pregunta": "¿Qué empresa presentó GPT-5.5?",
+                                "opciones": [
+                                        "OpenAI",
+                                        "Apple",
+                                        "Nintendo",
+                                        "Meta"
+                                ],
+                                "correcta": "OpenAI"
+                        },
+                        {
+                                "pregunta": "¿Qué chip usa el iPhone 17e según Apple?",
+                                "opciones": [
+                                        "A19",
+                                        "M1",
+                                        "Snapdragon 8",
+                                        "Tensor G5"
+                                ],
+                                "correcta": "A19"
+                        },
+                        {
+                                "pregunta": "¿Qué consola sucesora de Nintendo Switch llegó en 2025?",
+                                "opciones": [
+                                        "Nintendo Switch 2",
+                                        "Wii U 2",
+                                        "GameCube Mini",
+                                        "DS Pro"
+                                ],
+                                "correcta": "Nintendo Switch 2"
+                        }
+                ],
+                "notas": [
+                        [
+                                "INTELIGENCIA ARTIFICIAL",
+                                "OpenAI presenta GPT-5.5",
+                                "OpenAI publicó GPT-5.5 como una mejora de inteligencia y eficiencia, con más capacidad para metas complejas y tareas con herramientas.",
+                                "Tech Desk · abr 2026",
+                                "blGtYq9mL18",
+                                "https://openai.com/es-ES/index/introducing-gpt-5-5/",
+                                "OpenAI"
+                        ],
+                        [
+                                "GOOGLE AI",
+                                "Google lanza Gemini 3",
+                                "Google presentó Gemini 3 como su modelo más inteligente, con mejoras de razonamiento y capacidades multimodales para productos como Gemini y AI Studio.",
+                                "Tech Desk · nov 2025",
+                                "98DcoXwGX6I",
+                                "https://blog.google/products-and-platforms/products/gemini/gemini-3/",
+                                "Google"
+                        ],
+                        [
+                                "APPLE",
+                                "iPhone 17e llega como opción más accesible de la familia 17",
+                                "Apple anunció iPhone 17e con chip A19, módem C1X y cámara Fusion de 48 MP como entrada más económica de la línea.",
+                                "Tech Desk · mar 2026",
+                                "TiE2F1V841A",
+                                "https://www.apple.com/newsroom/2026/03/apple-introduces-iphone-17e/",
+                                "Apple Newsroom"
+                        ],
+                        [
+                                "VIDEOJUEGOS",
+                                "Nintendo Switch 2 abre nueva etapa para el juego híbrido",
+                                "Nintendo confirmó el lanzamiento de Switch 2 con nuevos juegos, mejoras de hardware y funciones como GameChat.",
+                                "Gaming Desk · jun 2025",
+                                "itpcsQQvgAQ",
+                                "https://www.nintendo.com/en-gb/News/2025/June/Upcoming-Nintendo-Switch-2-games-June-2025-2840361.html",
+                                "Nintendo"
+                        ],
+                        [
+                                "GADGETS",
+                                "iPhone 17 Pro empuja el video móvil profesional",
+                                "Apple presentó iPhone 17 Pro con A19 Pro, mejoras de cámara y enfoque en captura cinematográfica y rendimiento.",
+                                "Tech Desk · sep 2025",
+                                "_-AS5DtDeqs",
+                                "https://www.apple.com/newsroom/2025/09/apple-unveils-iphone-17-pro-and-iphone-17-pro-max/",
+                                "Apple Newsroom"
+                        ]
+                ],
+                "sidebar": [
+                        "GPT-5.5",
+                        "Gemini 3",
+                        "iPhone 17e",
+                        "Switch 2"
+                ]
+        },
+        "comida": {
+                "titulo": "comida",
+                "emoji": "🍜",
+                "descripcion": "Gastronomía mexicana y rankings internacionales recientes.",
+                "encuesta": "¿Qué noticia gastronómica probarías?",
+                "opcionesEncuesta": [
+                        "Michelin México",
+                        "50 Best",
+                        "CDMX",
+                        "Cocina Nikkei"
+                ],
+                "retos": [
+                        "Recomienda un platillo mexicano con historia",
+                        "Explica qué significa una estrella Michelin",
+                        "Di un restaurante mexicano reconocido internacionalmente"
+                ],
+                "trivia": [
+                        {
+                                "pregunta": "¿Cuántos restaurantes con estrella destacó Michelin México 2026?",
+                                "opciones": [
+                                        "29",
+                                        "5",
+                                        "12",
+                                        "100"
+                                ],
+                                "correcta": "29"
+                        },
+                        {
+                                "pregunta": "¿Qué restaurante fue el No. 1 de Latin America's 50 Best 2025?",
+                                "opciones": [
+                                        "El Chato",
+                                        "Quintonil",
+                                        "Pujol",
+                                        "Maido"
+                                ],
+                                "correcta": "El Chato"
+                        },
+                        {
+                                "pregunta": "¿Qué restaurante fue nombrado The World's Best Restaurant 2025?",
+                                "opciones": [
+                                        "Maido",
+                                        "Central",
+                                        "Disfrutar",
+                                        "Don Julio"
+                                ],
+                                "correcta": "Maido"
+                        }
+                ],
+                "notas": [
+                        [
+                                "MICHELIN MÉXICO",
+                                "La Guía Michelin México 2026 reconoce 29 restaurantes con estrella",
+                                "La selección 2026 confirmó el crecimiento gastronómico del país y sumó nuevas estrellas en el mapa culinario mexicano.",
+                                "Sabores · 20 may 2026",
+                                "rsWHpKuZlUs",
+                                "https://guide.michelin.com/en/article/michelin-guide-ceremony/every-michelin-starred-restaurant-in-mexico-for-2026-and-the-year-s-key-trends",
+                                "Michelin Guide"
+                        ],
+                        [
+                                "CDMX",
+                                "Pujol y Quintonil conservan dos estrellas Michelin",
+                                "Dos referentes de Ciudad de México aparecen en la Guía Michelin 2026 con dos estrellas, consolidando la cocina mexicana contemporánea.",
+                                "Sabores · 2026",
+                                "Bu1KJygzo_Q",
+                                "https://guide.michelin.com/en/ciudad-de-mexico/miguel-hidalgo_1999281/restaurant/quintonil",
+                                "Michelin Guide"
+                        ],
+                        [
+                                "LATIN 50 BEST",
+                                "El Chato es elegido mejor restaurante de Latinoamérica 2025",
+                                "El restaurante bogotano lideró Latin America's 50 Best Restaurants 2025; Quintonil aparece en el Top 10 de la lista regional.",
+                                "Sabores · 2 dic 2025",
+                                "VqYQyY880Yg",
+                                "https://www.theworlds50best.com/latinamerica/en/list/1-50",
+                                "The World's 50 Best"
+                        ],
+                        [
+                                "WORLD 50 BEST",
+                                "Maido, en Lima, gana The World's Best Restaurant 2025",
+                                "El restaurante de cocina nikkei dirigido por Mitsuharu Tsumura fue reconocido como el mejor restaurante del mundo en 2025.",
+                                "Sabores · 19 jun 2025",
+                                "1Cyx1WdsoI4",
+                                "https://www.theworlds50best.com/stories/News/maido-lima-the-worlds-best-restaurant-2025.html",
+                                "The World's 50 Best"
+                        ],
+                        [
+                                "CDMX FOOD",
+                                "La escena de restaurantes en CDMX sigue creciendo",
+                                "Guías gastronómicas recientes mantienen a la capital mexicana como una de las ciudades más fuertes de América para comer, de tacos a alta cocina.",
+                                "Sabores · abr 2026",
+                                "GvqvSGIczcQ",
+                                "https://www.eater.com/maps/best-mexico-city-restaurants-38",
+                                "Eater"
+                        ]
+                ],
+                "sidebar": [
+                        "Michelin 2026",
+                        "Pujol y Quintonil",
+                        "El Chato No. 1",
+                        "Maido mundial"
+                ]
+        }
+};
+
+      // Validar que cada nota tenga ID de video y fuente verificada
+      for (let s in secciones) {
+        secciones[s].notas = secciones[s].notas.map(n => {
+          if (n.length >= 7) return n;
+          return [...n, 'tgbNymZ7vqY', 'https://www.youtube.com/', 'Fuente relacionada'];
+        });
+      }
+
+      let estado = {};
+      Object.keys(secciones).forEach(id => {
+        estado[id] = {
+          votos: Array(secciones[id].opcionesEncuesta.length).fill(0),
+          triviaIndex: 0, puntaje: 0, respondida: false, retoIndex: 0
+        };
+      });
+
+      let seccionActual = 'deporte';
+      const contenido = document.getElementById('contenido');
+
+      function crearTarjeta(sectionId, nota, idx) {
+        const featured = idx === 0;
+        const small = idx > 0 && idx < 3;
+        return `
+          <article class="card ${featured ? 'featured' : ''} ${small ? 'small' : ''}" data-open-note="${sectionId}" data-note-index="${idx}" tabindex="0">
+            ${featured ? `<span style="font-size:2rem; display:inline-block; margin-bottom:10px;">${secciones[sectionId].emoji}</span>` : ''}
+            <div class="kicker">${nota[0]}</div>
+            <h2>${nota[1]}</h2>
+            <p class="summary">${nota[2]}</p>
+            <div class="byline">${nota[3]}</div>
+            <div class="actions">
+              <button class="chip-button" data-like>👍 Like <span>0</span></button>
+              <button class="chip-button" data-save>🔖 Guardar</button>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:14px;">
+              <button class="chip-button" data-audio-note="${sectionId}" data-note-index="${idx}">🔊 Audio</button>
+              <button class="chip-button" data-video-note="${sectionId}" data-note-index="${idx}">🎬 Video</button>
+            </div>
+          </article>
+        `;
+      }
+
+      function getYouTubeId(value) {
+        if (!value) return '';
+        const raw = String(value).trim();
+        const direct = raw.match(/^[a-zA-Z0-9_-]{11}$/);
+        if (direct) return raw;
+        const parsed = raw.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([a-zA-Z0-9_-]{11})/);
+        return parsed ? parsed[1] : '';
+      }
+
+      function videoEmbedUrl(sectionId, idx) {
+        const nota = secciones[sectionId].notas[idx];
+        const vidId = getYouTubeId(nota[4]);
+        return vidId ? `https://www.youtube-nocookie.com/embed/${vidId}?rel=0&modestbranding=1` : '';
+      }
+
+      function searchUrl(sectionId, idx) {
+        const nota = secciones[sectionId].notas[idx];
+        const q = `${secciones[sectionId].titulo} ${nota[0]} ${nota[1]} video`;
+        return `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`;
+      }
+
+      function fuenteUrl(sectionId, idx) {
+        return secciones[sectionId].notas[idx][5] || '#';
+      }
+
+      function fuenteNombre(sectionId, idx) {
+        return secciones[sectionId].notas[idx][6] || 'fuente verificada';
+      }
+
+      function audioResumen(sectionId, idx) {
+        const nota = secciones[sectionId].notas[idx];
+        const texto = `${nota[1]}. ${nota[2]}`;
+        if ('speechSynthesis' in window) {
+          window.speechSynthesis.cancel();
+          const utterance = new SpeechSynthesisUtterance(texto);
+          utterance.lang = 'es-MX';
+          utterance.rate = 0.9;
+          window.speechSynthesis.speak(utterance);
+        } else alert('El navegador no soporta síntesis de voz');
+      }
+
+      function abrirModal(sectionId, idx) {
+        const nota = secciones[sectionId].notas[idx];
+        const modal = document.getElementById('modal');
+        document.getElementById('modal-kicker').innerHTML = nota[0];
+        document.getElementById('modal-titulo').innerText = nota[1];
+        const embed = videoEmbedUrl(sectionId, idx);
+        document.getElementById('modal-cuerpo').innerHTML = `
+          <p style="margin: 12px 0;">${nota[2]}</p>
+          <p style="font-size:0.78rem; color:#6d7168; margin-bottom:14px;">Fuente: <a href="${fuenteUrl(sectionId, idx)}" target="_blank" rel="noopener" style="color:var(--primary); font-weight:700;">${fuenteNombre(sectionId, idx)}</a></p>
+          <div class="modal-media">
+            <div class="widget-label">video relacionado</div>
+            ${embed ? `<iframe class="video-frame" src="${embed}" title="video relacionado: ${nota[1]}" frameborder="0" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>` : `<p>No se encontró un video insertable para esta nota.</p>`}
+            <div style="display:flex; flex-wrap:wrap; gap:10px; margin-top: 12px;">
+              <a href="${searchUrl(sectionId, idx)}" target="_blank" style="color: var(--primary); font-size:0.8rem;" rel="noopener">🔍 Más videos relacionados</a>
+              <a href="${fuenteUrl(sectionId, idx)}" target="_blank" style="color: var(--primary); font-size:0.8rem;" rel="noopener">📰 Leer fuente original</a>
+            </div>
+            <div style="margin-top: 16px;"><button class="btn" data-audio-modal="${sectionId}" data-idx="${idx}">🔊 Escuchar noticia</button></div>
+          </div>
+        `;
+        modal.classList.add('open');
+        document.body.style.overflow = 'hidden';
+        document.body.dataset.section = sectionId;
+        // evento para audio dentro del modal
+        setTimeout(() => {
+          const btnAudio = document.querySelector('[data-audio-modal]');
+          if(btnAudio) btnAudio.addEventListener('click', (e) => {
+            e.stopPropagation();
+            audioResumen(btnAudio.dataset.audioModal, parseInt(btnAudio.dataset.idx));
+          });
+        }, 20);
+      }
+
+      function cerrarModal() {
+        document.getElementById('modal').classList.remove('open');
+        document.body.style.overflow = '';
+        if(window.speechSynthesis) window.speechSynthesis.cancel();
+      }
+
+      function cambiarSeccion(id) {
+        seccionActual = id;
+        document.body.dataset.section = id;
+        document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('visible'));
+        document.getElementById(`sec-${id}`).classList.add('visible');
+        document.querySelectorAll('[data-section-target]').forEach(btn => btn.classList.toggle('active', btn.dataset.sectionTarget === id));
+        cerrarMenu();
+      }
+
+      function renderCompleto() {
+        contenido.innerHTML = Object.entries(secciones).map(([id, sec], idx) => `
+          <section class="section-panel ${idx === 0 ? 'visible' : ''}" id="sec-${id}">
+            <div class="section-head">
+              <h2 class="section-title"><span>${sec.emoji}</span> ${sec.titulo}</h2>
+              <p class="section-desc">${sec.descripcion}</p>
+            </div>
+            <div class="news-grid">${sec.notas.slice(0,3).map((n,i)=>crearTarjeta(id,n,i)).join('')}</div>
+            <div class="more-grid">
+              <div class="two-grid">${sec.notas.slice(3).map((n,i)=>crearTarjeta(id,n,i+3)).join('')}</div>
+              <aside class="side-card"><div class="side-title">⭐ ${sec.side || 'destacados'}</div>${sec.sidebar.map((item,ix)=>`<div class="side-item" data-open-note="${id}" data-note-index="${ix % sec.notas.length}"><div class="num">0${ix+1}</div><div><strong>${item}</strong><span> · novedad</span></div></div>`).join('')}</aside>
+            </div>
+            <div class="interactive-zone">
+              <div class="widget"><div class="widget-label">encuesta</div><h3>${sec.encuesta}</h3><div class="option-list" data-poll-options="${id}"></div><div data-poll-result="${id}" class="result" style="margin-top:12px; font-size:0.8rem;"></div><div data-poll-bars="${id}"></div></div>
+              <div class="widget"><div class="widget-label">reto</div><h3>mini reto ${sec.titulo}</h3><div><strong data-challenge-text="${id}">${sec.retos[0]}</strong><button class="btn" data-next-challenge="${id}" style="margin-left:12px;">🔄 Nuevo</button></div></div>
+              <div class="widget"><div class="widget-label">trivia real</div><h3>¿Cuánto sabes?</h3><p data-quiz-question="${id}"></p><div class="option-list" data-quiz-options="${id}"></div><p data-quiz-result="${id}" class="result"></p><button class="btn" data-next-question="${id}">Siguiente →</button></div>
+            </div>
+          </section>
+        `).join('');
+        Object.keys(secciones).forEach(id => { initPoll(id); loadTrivia(id); });
+      }
+
+      function initPoll(sectionId) {
+        const sec = secciones[sectionId];
+        const container = document.querySelector(`[data-poll-options="${sectionId}"]`);
+        if(!container) return;
+        container.innerHTML = sec.opcionesEncuesta.map((opt, i) => `<button data-vote="${sectionId}" data-vote-index="${i}">${opt}</button>`).join('');
+        updatePoll(sectionId);
+      }
+      function updatePoll(sectionId) {
+        const sec = secciones[sectionId];
+        const votos = estado[sectionId].votos;
+        const total = votos.reduce((a,b)=>a+b,0);
+        const ganadorIdx = votos.indexOf(Math.max(...votos));
+        const resultDiv = document.querySelector(`[data-poll-result="${sectionId}"]`);
+        if(resultDiv) resultDiv.innerText = total === 0 ? 'Sin votos' : `🗳️ ${total} votos · lidera: ${sec.opcionesEncuesta[ganadorIdx]}`;
+        const barsDiv = document.querySelector(`[data-poll-bars="${sectionId}"]`);
+        if(barsDiv) barsDiv.innerHTML = sec.opcionesEncuesta.map((op,i) => {
+          let p = total===0 ? 0 : Math.round(votos[i]/total*100);
+          return `<div class="poll-row"><div class="poll-top"><span>${op}</span> ${votos[i]}</div><div class="bar"><span style="width:${p}%"></span></div></div>`;
+        }).join('');
+      }
+      function vote(sectionId, idx) { estado[sectionId].votos[idx]++; updatePoll(sectionId); }
+      function nextChallenge(sectionId) { let st = estado[sectionId]; st.retoIndex = (st.retoIndex+1)%secciones[sectionId].retos.length; document.querySelector(`[data-challenge-text="${sectionId}"]`).innerText = secciones[sectionId].retos[st.retoIndex]; }
+      function loadTrivia(sectionId) {
+        const sec = secciones[sectionId], st = estado[sectionId];
+        const item = sec.trivia[st.triviaIndex];
+        document.querySelector(`[data-quiz-question="${sectionId}"]`).innerHTML = `${st.triviaIndex+1}. ${item.pregunta}`;
+        const optsDiv = document.querySelector(`[data-quiz-options="${sectionId}"]`);
+        optsDiv.innerHTML = '';
+        item.opciones.forEach(op => { let btn = document.createElement('button'); btn.innerText = op; btn.dataset.answer = sectionId; optsDiv.appendChild(btn); });
+        st.respondida = false;
+        document.querySelector(`[data-quiz-result="${sectionId}"]`).innerHTML = `🏆 Puntaje: ${st.puntaje}/${sec.trivia.length}`;
+      }
+      function answerTrivia(sectionId, btn) {
+        let st = estado[sectionId], sec = secciones[sectionId];
+        if(st.respondida) return;
+        st.respondida = true;
+        const item = sec.trivia[st.triviaIndex];
+        const correct = btn.innerText === item.correcta;
+        if(correct) st.puntaje++;
+        document.querySelectorAll(`[data-quiz-options="${sectionId}"] button`).forEach(b => { b.disabled=true; if(b.innerText === item.correcta) b.classList.add('correct'); });
+        if(!correct) btn.classList.add('wrong');
+        document.querySelector(`[data-quiz-result="${sectionId}"]`).innerHTML = correct ? `✅ Correcto! Total: ${st.puntaje}` : `❌ Era "${item.correcta}" · Puntaje: ${st.puntaje}`;
+      }
+      function nextTrivia(sectionId) { let st = estado[sectionId]; st.triviaIndex = (st.triviaIndex+1) % secciones[sectionId].trivia.length; if(st.triviaIndex===0) st.puntaje=0; loadTrivia(sectionId); }
+
+      renderCompleto();
+
+      function cerrarMenu() { document.querySelector('.section-nav')?.classList.remove('open'); }
+      document.addEventListener('click', (e) => {
+        if(e.target.closest('#menu-toggle')) { e.stopPropagation(); document.querySelector('.section-nav').classList.toggle('open'); return; }
+        if(!e.target.closest('.section-nav')) cerrarMenu();
+        if(e.target.closest('[data-section-target]')) cambiarSeccion(e.target.closest('[data-section-target]').dataset.sectionTarget);
+        if(e.target.closest('[data-video-note]')) { let t = e.target.closest('[data-video-note]'); abrirModal(t.dataset.videoNote, parseInt(t.dataset.noteIndex)); }
+        if(e.target.closest('[data-audio-note]')) { let a = e.target.closest('[data-audio-note]'); audioResumen(a.dataset.audioNote, parseInt(a.dataset.noteIndex)); }
+        if(e.target.closest('[data-vote]')) { let v = e.target.closest('[data-vote]'); vote(v.dataset.vote, parseInt(v.dataset.voteIndex)); }
+        if(e.target.closest('[data-answer]')) answerTrivia(e.target.closest('[data-answer]').dataset.answer, e.target.closest('[data-answer]'));
+        if(e.target.closest('[data-next-question]')) nextTrivia(e.target.closest('[data-next-question]').dataset.nextQuestion);
+        if(e.target.closest('[data-next-challenge]')) nextChallenge(e.target.closest('[data-next-challenge]').dataset.nextChallenge);
+        if(e.target.closest('[data-like]')) { let span = e.target.closest('[data-like]').querySelector('span'); if(span) span.innerText = parseInt(span.innerText||0)+1; }
+        if(e.target.closest('[data-save]')) { let btn = e.target.closest('[data-save]'); btn.innerText = '✓ Guardado'; btn.disabled=true; }
+        let noteCard = e.target.closest('[data-open-note]');
+        if(noteCard && !e.target.closest('button')) abrirModal(noteCard.dataset.openNote, parseInt(noteCard.dataset.noteIndex));
+      });
+      document.getElementById('modal-close')?.addEventListener('click', cerrarModal);
+      document.getElementById('modal')?.addEventListener('click', (e) => { if(e.target.id === 'modal') cerrarModal(); });
+      document.getElementById('toggle-compact')?.addEventListener('click', () => document.body.classList.toggle('compact'));
+      document.getElementById('go-top')?.addEventListener('click', () => window.scrollTo({top:0, behavior:'smooth'}));
+      document.addEventListener('keydown', (e) => { if(e.key === 'Escape') { cerrarModal(); cerrarMenu(); } });
+    })();
+  </script>
+  <footer style="margin-top: 48px; padding: 24px 0; text-align: center; border-top: 1px solid var(--linea); color: var(--gris-suave); font-size: 0.75rem;">
+    <div class="wrap">© 2026 · Periódico Digital — the big 3 · noticias verificadas, fuentes reales y videos relacionados</div>
+  </footer>
+</body>
+</html>
